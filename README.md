@@ -1,1 +1,1 @@
-# production-ready-eks test
+# production-ready-eks
