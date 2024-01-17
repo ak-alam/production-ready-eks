@@ -26,7 +26,11 @@ resource "aws_vpc" "vpc" {
  enable_dns_support = var.enable_dns_support
  enable_dns_hostnames = var.enable_dns_hostnames
 
- tags = merge(local.tags, {Name = "${var.identifier}-${terraform.workspace}"})
+ tags = merge(local.tags, 
+ {
+    Name = "${var.identifier}-${terraform.workspace}",
+  "kubernetes.io/cluster/${var.identifier}-${terraform.workspace}" = "owned"
+ })
 }
 
 #Subnets
@@ -36,7 +40,11 @@ resource "aws_subnet" "public_subnets" {
   cidr_block = element(var.public_subnets, count.index)
   availability_zone = element(local.azs, count.index)
 
-  tags = merge(local.tags, {Name = "${var.identifier}-${terraform.workspace}-public-subnet-${count.index}"})
+  tags = merge(local.tags, 
+  {
+    Name = "${var.identifier}-${terraform.workspace}-public-subnet-${count.index}",
+    "kubernetes.io/role/elb"= 1 
+  })
 }
 
 resource "aws_subnet" "private_subnets" {
@@ -45,7 +53,11 @@ resource "aws_subnet" "private_subnets" {
   cidr_block = element(var.private_subnets, count.index)
   availability_zone = element(local.azs, count.index)
 
-  tags = merge(local.tags, {Name = "${var.identifier}-${terraform.workspace}-private-subnet-${count.index}"})
+  tags = merge(local.tags, 
+  {
+    Name = "${var.identifier}-${terraform.workspace}-private-subnet-${count.index}",
+    "kubernetes.io/role/internal-elb" = 1
+  })
 }
 resource "aws_subnet" "data_subnets" {
   count = length(var.data_subnets)
@@ -53,7 +65,11 @@ resource "aws_subnet" "data_subnets" {
   cidr_block = element(var.data_subnets, count.index)
   availability_zone = element(local.azs, count.index)
 
-  tags = merge(local.tags, {Name = "${var.identifier}-${terraform.workspace}-data-subnet-${count.index}"})
+  tags = merge(local.tags, 
+  {
+    Name = "${var.identifier}-${terraform.workspace}-data-subnet-${count.index}"
+    "kubernetes.io/role/internal-elb" = 1
+  })
   
 }
 
