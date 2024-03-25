@@ -10,4 +10,13 @@ terraform {
 provider "aws" {
   # Configuration options
   region = "us-east-1"
+   default_tags {
+   tags = {
+     Owner       = "Akbar"
+     Project     = "Learn-and"
+     Environment = "${terraform.workspace}"
+     ManagedBy   = "Terraform"
+
+   }
+ }
 }

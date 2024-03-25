@@ -5,4 +5,6 @@ variable "identifier" {
 
 variable "cluster_vpc" {}
 
+variable "eks_additional_sg" {}
+
 variable "eks_settings" {}
