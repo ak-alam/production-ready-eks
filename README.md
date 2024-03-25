@@ -2,6 +2,7 @@
 
 #### Resources Created by the module.
 * VPC
+* Security Group
 * EKS Cluster
 
 #### How To Run The Project
