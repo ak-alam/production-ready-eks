@@ -6,16 +6,14 @@ data "aws_availability_zones" "available" {
 locals {
     azs = data.aws_availability_zones.available.names
     default_tags = {
-        # Name        = "${var.identifier}-${terraform.workspace}"
-        Environment = "${terraform.workspace}"
-        ManagedBy   = "Terraform"
+
     }
     #Defaults tags with the custom tags passed by users
     tags = "${merge(local.default_tags, var.tags)}"
 
     #multi nat configs
-    multi_nat = var.multi_nat_gw ? local.az_count : 1
-    az_count  = length(var.public_subnets) > length(data.aws_availability_zones.available.names) ? length(data.aws_availability_zones.available.names) : length(var.public_subnets)
+    # multi_nat = var.multi_nat_gw ? local.az_count : 1
+    # az_count  = length(var.public_subnets) > length(data.aws_availability_zones.available.names) ? length(data.aws_availability_zones.available.names) : length(var.public_subnets)
 
 
 }
@@ -85,7 +83,7 @@ resource "aws_internet_gateway" "igw" {
 #NAT Gateway
 resource "aws_eip" "nat_gw" {
   # count = length(var.nat_eip) > 0 ? 0 : local.multi_nat
-  count = local.multi_nat
+  # count = local.multi_nat
   tags  = merge(local.tags, {Name = "${var.identifier}-${terraform.workspace}-nat-eip"})
   domain   = "vpc"
 
@@ -94,11 +92,12 @@ resource "aws_eip" "nat_gw" {
 
 
 resource "aws_nat_gateway" "nat_gw" {
-  count         = local.multi_nat
+  # count         = local.multi_nat
   # allocation_id = length(var.nat_eip) > 0 ? data.aws_eip.user_eips[count.index].id : aws_eip.nat_gw[count.index].id
-  allocation_id = aws_eip.nat_gw[count.index].id
-  subnet_id     = aws_subnet.public_subnets[count.index].id
-  tags          = merge(local.tags, { Name = "${var.identifier}-${terraform.workspace}-nat-gw-${count.index}" })
+  # allocation_id = aws_eip.nat_gw[count.index].id
+  allocation_id = aws_eip.nat_gw.id
+  subnet_id     = aws_subnet.public_subnets[0].id
+  tags          = merge(local.tags, { Name = "${var.identifier}-${terraform.workspace}-nat-gw" })
 
   depends_on = [aws_subnet.private_subnets, aws_subnet.data_subnets, aws_subnet.public_subnets]
 }
@@ -151,7 +150,8 @@ resource "aws_route" "internet_gateway_route" {
 resource "aws_route" "private_nat_gateway_route" {
   count                  = length(var.private_subnets)
   destination_cidr_block = "0.0.0.0/0"
-  nat_gateway_id         = aws_nat_gateway.nat_gw[count.index % local.multi_nat].id
+  # nat_gateway_id         = aws_nat_gateway.nat_gw[count.index % local.multi_nat].id
+  nat_gateway_id         = aws_nat_gateway.nat_gw.id
   route_table_id         = aws_route_table.private[count.index].id
   depends_on             = [aws_route_table.private]
 }
@@ -159,7 +159,7 @@ resource "aws_route" "private_nat_gateway_route" {
 resource "aws_route" "data_nat_gateway_route" {
   count                  = length(var.data_subnets)
   destination_cidr_block = "0.0.0.0/0"
-  nat_gateway_id         = aws_nat_gateway.nat_gw[count.index % local.multi_nat].id
+  nat_gateway_id         = aws_nat_gateway.nat_gw[count.index].id
   route_table_id         = aws_route_table.data_subnets[count.index].id
   depends_on             = [aws_route_table.data_subnets]
 }
