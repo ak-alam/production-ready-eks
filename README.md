@@ -4,7 +4,12 @@
 * VPC
 * Security Group
 * EKS Cluster
-
+* Addons
+* HPA/VPA
+* Ingress controller
+* Karpenter (Node ASG)
+* Prometheus grafana (Kube-Prometheus-Stack)
+* 
 #### How To Run The Project
 
 ```bash

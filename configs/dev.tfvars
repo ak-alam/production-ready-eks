@@ -1,4 +1,4 @@
-identifier           = "cloudops"
+identifier           = "dev"
 cluster_vpc = {
     vpc_cidr             = "10.0.0.0/16"
     public_subnets       = ["10.0.1.0/24", "10.0.3.0/24"]
@@ -36,4 +36,16 @@ eks_settings = {
     ng_min_size = 1
     ng_capacity_type = "ON_DEMAND"
     ng_instance_types = ["t3.medium"]
+    # addons = [
+    #     {
+    #         addon_name = "coredns"
+    #         addon_version = "v1.10.1-eksbuild.7"
+    #         resolve_conflicts_on_update = "PRESERVE"
+    #     },
+    #     {
+    #         addon_name = "kube-proxy"
+    #         addon_version = "v1.28.6-eksbuild.2"
+    #         resolve_conflicts_on_update = "PRESERVE"
+    #     },
+    # ]
 }

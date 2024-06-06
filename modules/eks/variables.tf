@@ -90,6 +90,9 @@ variable "ng_max_unavailable_percentage" {
   type = number
   default = 50
 }
+
+
+
 variable "tags" {
   type = map
   default = {}

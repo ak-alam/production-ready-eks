@@ -27,6 +27,8 @@ module "eks" {
   ng_min_size = var.eks_settings.ng_min_size
   ng_capacity_type = var.eks_settings.ng_capacity_type
   ng_instance_types = var.eks_settings.ng_instance_types
+
+  # addons = var.eks_settings.addons
   
   depends_on = [ module.vpc ]
 }
